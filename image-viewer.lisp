@@ -9,6 +9,11 @@
 	 :long "path"
 	 :arg-parser #'parse-namestring))
 
+(defmacro when-option ((options opt) &body body)
+  `(let ((it (getf ,options ,opt)))
+     (when it
+       ,@body)))
+
 (defmacro with-image-init (&body body)
   `(progn
     (sdl2-image:init '(:png))
@@ -27,25 +32,27 @@
 (defun main-loop (renderer texture dst-rect)
   (clear-renderer renderer)
   (sdl2:render-copy renderer texture :dest-rect dst-rect)
-  (sdl2:render-present renderer)
+  (sdl2:render-present renderer)`1  U8
   (sdl2:delay 500))
 
 (defun main ()
-  (with-image-init
-    (let* ((image (sdl2-image:load-image "/home/rob/Pictures/test.png"))
-	   (width (scale (sdl2:surface-width image)))
-	   (height (scale (sdl2:surface-height image))))
-      (sdl2:with-init (:everything)
-	(sdl2:with-window (win
-			   :title "file-name.png"
-			   :w width
-			   :h height
-			   :flags '(:shown :resizable))
-	  (sdl2:with-renderer (renderer win :flags '(:accelerated))
-	    (sdl2:with-event-loop (:method :poll)
-	      (:idle ()
-		     (main-loop renderer
-				(sdl2:create-texture-from-surface renderer image)
-				(sdl2:make-rect 0 0 width height))
-		     (format t "~a~%" (sdl2:get-window-size win)))
-	      (:quit () t))))))))
+  (unless (null (getf (opts:get-opts) :path))
+    (with-image-init
+      (let* ((image (sdl2-image:load-image (getf (opts:get-opts) :path)))
+	     (width (scale (sdl2:surface-width image)))
+	     (height (scale (sdl2:surface-height image))))
+	(sdl2:with-init (:everything)
+	  (sdl2:with-window (win
+			     :title "file-name.png"
+			     :w width
+			     :h height
+			     :flags '(:shown :resizable))
+	    (sdl2:with-renderer (renderer win :flags '(:accelerated))
+	      (sdl2:with-event-loop (:method :poll)
+		(:idle ()
+		       (main-loop renderer
+				  (sdl2:create-texture-from-surface renderer image)
+				  (sdl2:make-rect 0 0 width height))
+		       (format t "~a~%" (sdl2:get-window-size win)))
+		(:quit () t))))))))
+  (format t "No path provided, ending program~%"))
