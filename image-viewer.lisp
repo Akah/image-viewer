@@ -55,4 +55,4 @@
 				  (sdl2:make-rect 0 0 width height)))
 		       ;(format t "~a~%" (sdl2:get-window-size win)))
 		(:quit () t))))))))
-  (format t "No path provided, ending program~%"))
+  (format t "No path provided (did you forget '-p <path>'), ending program~%"))
