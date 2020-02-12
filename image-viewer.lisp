@@ -33,7 +33,7 @@
   (clear-renderer renderer)
   (sdl2:render-copy renderer texture :dest-rect dst-rect)
   (sdl2:render-present renderer)
-  (sdl2:delay 500))
+  (sdl2:delay 50))
 
 (defun main ()
   (unless (null (getf (opts:get-opts) :path))
