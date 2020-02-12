@@ -32,7 +32,7 @@
 (defun main-loop (renderer texture dst-rect)
   (clear-renderer renderer)
   (sdl2:render-copy renderer texture :dest-rect dst-rect)
-  (sdl2:render-present renderer)`1  U8
+  (sdl2:render-present renderer)
   (sdl2:delay 500))
 
 (defun main ()
@@ -52,7 +52,7 @@
 		(:idle ()
 		       (main-loop renderer
 				  (sdl2:create-texture-from-surface renderer image)
-				  (sdl2:make-rect 0 0 width height))
-		       (format t "~a~%" (sdl2:get-window-size win)))
+				  (sdl2:make-rect 0 0 width height)))
+		       ;(format t "~a~%" (sdl2:get-window-size win)))
 		(:quit () t))))))))
   (format t "No path provided, ending program~%"))
