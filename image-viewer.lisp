@@ -40,7 +40,8 @@
     (with-image-init
       (let* ((image (sdl2-image:load-image (getf (opts:get-opts) :path)))
 	     (width (scale (sdl2:surface-width image)))
-	     (height (scale (sdl2:surface-height image))))
+	     (height (scale (sdl2:surface-height image)))
+	     (texture nil))
 	(sdl2:with-init (:everything)
 	  (sdl2:with-window (win
 			     :title "file-name.png"
@@ -48,11 +49,12 @@
 			     :h height
 			     :flags '(:shown :resizable))
 	    (sdl2:with-renderer (renderer win :flags '(:accelerated))
+	      (setq texture (sdl2:create-texture-from-surface renderer image))
 	      (sdl2:with-event-loop (:method :poll)
 		(:idle ()
 		       (main-loop renderer
-				  (sdl2:create-texture-from-surface renderer image)
+				  texture
 				  (sdl2:make-rect 0 0 width height)))
 		       ;(format t "~a~%" (sdl2:get-window-size win)))
-		(:quit () t))))))))
-  (format t "No path provided (did you forget '-p <path>'), ending program~%"))
+		(:quit () t)))))))
+    (format t "No path provided (did you forget '-p <path>'), ending program~%")))
